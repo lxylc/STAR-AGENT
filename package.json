@@ -1,19 +1,31 @@
 {
-  "name": "study_system",
+  "name": "star-agent",
   "version": "1.0.0",
-  "description": "```\r study_system/\r ├── backend/          # Spring Boot 3.2 + MyBatis-Plus\r ├── profile_flask/    # 画像自主构建（自评+出题+星火判题）\r ├── frontend/         # Vue3 + Vite + Element Plus\r ├── docs/             # 模块设计文档\r └── README.md\r ```",
-  "main": "index.js",
+  "private": true,
+  "description": "基于科大讯飞大模型与多智能体的个性化学习智能体系统",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "install:frontend": "npm install --prefix frontend",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "build:frontend": "npm run build --prefix frontend",
+    "preview:frontend": "npm run preview --prefix frontend",
+    "dev:backend": "mvn -f backend/pom.xml spring-boot:run",
+    "dev:flask": "python profile_flask/app.py"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lxylc/STAR-AGENT.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "learning-agent",
+    "xfyun",
+    "spark",
+    "multi-agent",
+    "vue3",
+    "spring-boot",
+    "flask"
+  ],
+  "author": "hanxiang",
   "license": "ISC",
-  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/lxylc/STAR-AGENT/issues"
   },
