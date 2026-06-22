@@ -1,0 +1,7 @@
+{
+  "plantuml.render": "Local",
+  "plantuml.exportFormat": "svg",
+  "plantuml.exportOutDir": "docs/diagrams",
+  "plantuml.exportSubFolder": false,
+  "plantuml.graphvizDot": "C:\\Program Files\\Graphviz\\bin\\dot.exe"
+}

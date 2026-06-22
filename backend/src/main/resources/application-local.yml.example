@@ -1,0 +1,9 @@
+# 复制为 application-local.yml 后填写（勿提交 Git）
+# 启动时加参数: --spring.profiles.active=local
+xfyun:
+  api-secret: 在此填写你的APISecret
+
+spring:
+  datasource:
+    username: root
+    password: 你的MySQL密码

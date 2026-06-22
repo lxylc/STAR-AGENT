@@ -1,0 +1,336 @@
+/* ThinkPilot 冷白浅蓝极简主题 */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+
+
+.app-shell {
+
+  --tp-bg: #f7f8fa;
+
+  --tp-card: #ffffff;
+
+  --tp-text: #333338;
+
+  --tp-muted: #757582;
+
+  --tp-border: #eeeef2;
+
+  --tp-divider: #e8e8ec;
+
+  --tp-hover: #f4f5f8;
+
+  --tp-tab-active: #c7edf0;
+
+  --tp-tab-active-alt: #bde8eb;
+
+  --tp-shadow: 0 2px 16px rgba(180, 190, 205, 0.1);
+
+  --tp-radius-card: 16px;
+
+  --tp-radius-btn: 10px;
+
+  --tp-radius-tag: 8px;
+
+  --sidebar-width: 220px;
+
+  --aux-panel-width: 300px;
+
+  --main-padding-x: 20px;
+
+  --main-padding-y: 20px;
+
+  --content-max: 1280px;
+
+  font-family: Inter, 'PingFang SC', 'Microsoft YaHei', 'Source Han Sans SC', sans-serif;
+
+}
+
+
+
+.app-shell {
+
+  height: 100vh;
+
+  overflow: hidden;
+
+  display: flex;
+
+  background: var(--tp-bg);
+
+  color: var(--tp-text);
+
+}
+
+
+
+.app-shell .main-panel {
+
+  flex: 1;
+
+  min-width: 0;
+
+  height: 100vh;
+
+  display: flex;
+
+  flex-direction: column;
+
+  background: var(--tp-bg);
+
+}
+
+
+
+.app-shell .main-panel__inner {
+
+  flex: 1;
+
+  min-height: 0;
+
+  width: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
+}
+
+
+
+.app-shell .main-panel--chat {
+
+  padding: 0;
+
+  overflow: hidden;
+
+}
+
+
+
+.app-shell .main-panel--chat .main-panel__inner {
+
+  height: 100%;
+
+  overflow: hidden;
+
+}
+
+
+
+.app-shell .main-panel--page {
+
+  padding: var(--main-padding-y) var(--main-padding-x);
+
+  overflow-y: auto;
+
+  overflow-x: hidden;
+
+}
+
+
+
+.app-shell .main-panel--page .main-panel__inner {
+
+  flex: 0 0 auto;
+
+  min-height: auto;
+
+  width: 100%;
+
+  max-width: var(--content-max);
+
+  margin: 0 auto;
+
+  box-sizing: border-box;
+
+}
+
+
+
+/* 各业务页统一占满内容区宽度，避免单页单独限宽 */
+
+.app-shell .main-panel--page .profile-page,
+
+.app-shell .main-panel--page .path-page,
+
+.app-shell .main-panel--page .resource-page,
+
+.app-shell .main-panel--page .personalized-page,
+
+.app-shell .main-panel--page .learn-page,
+
+.app-shell .main-panel--page .dialogue-page,
+
+.app-shell .main-panel--page .settings-page,
+
+.app-shell .main-panel--page .admin-page,
+
+.app-shell .main-panel--page .evaluation-page,
+
+.app-shell .main-panel--page .practice-page,
+
+.app-shell .main-panel--page .wrong-page,
+
+.app-shell .main-panel--page .history-page,
+
+.app-shell .main-panel--page .exercise-center,
+
+.app-shell .main-panel--page .flow-card {
+
+  width: 100%;
+
+  max-width: 100%;
+
+  margin: 0;
+
+  padding-left: 0;
+
+  padding-right: 0;
+
+  box-sizing: border-box;
+
+}
+
+
+
+.app-shell .el-button--primary {
+
+  --el-button-bg-color: #333338;
+
+  --el-button-border-color: #333338;
+
+  --el-button-hover-bg-color: #4a4a55;
+
+  --el-button-hover-border-color: #4a4a55;
+
+  --el-button-active-bg-color: #222228;
+
+  --el-button-active-border-color: #222228;
+
+}
+
+
+
+.app-shell .el-button.is-link {
+
+  color: var(--tp-text);
+
+}
+
+
+
+.app-shell .el-card {
+
+  --el-card-border-color: var(--tp-border);
+
+  color: var(--tp-text);
+
+  border-radius: var(--tp-radius-card);
+
+  box-shadow: var(--tp-shadow);
+
+  border: 1px solid var(--tp-border);
+
+}
+
+
+
+.app-shell .el-input__wrapper,
+
+.app-shell .el-textarea__inner {
+
+  border-radius: var(--tp-radius-btn);
+
+  box-shadow: 0 0 0 1px var(--tp-border) inset;
+
+}
+
+
+
+.app-shell .el-input__wrapper:hover,
+
+.app-shell .el-textarea__inner:hover {
+
+  box-shadow: 0 0 0 1px #d8d8e0 inset;
+
+}
+
+
+
+.app-shell .el-input__wrapper.is-focus,
+
+.app-shell .el-textarea__inner:focus {
+
+  box-shadow: 0 0 0 1px var(--tp-muted) inset;
+
+}
+
+
+
+.app-shell .main-panel--page .el-table {
+
+  width: 100% !important;
+
+}
+
+
+
+@media (max-width: 1100px) {
+
+  .app-shell {
+
+    --aux-panel-width: 280px;
+
+  }
+
+}
+
+
+
+@media (max-width: 900px) {
+
+  .app-shell {
+
+    --sidebar-width: 200px;
+
+  }
+
+}
+
+
+
+@media (max-width: 768px) {
+
+  .app-shell {
+
+    flex-direction: column;
+
+    height: auto;
+
+    min-height: 100vh;
+
+    overflow: auto;
+
+  }
+
+
+
+  .app-shell .main-panel {
+
+    height: auto;
+
+    min-height: 60vh;
+
+  }
+
+
+
+  .app-shell .main-panel--chat .main-panel__inner {
+
+    min-height: 70vh;
+
+  }
+
+}
+

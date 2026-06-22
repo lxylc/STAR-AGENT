@@ -1,0 +1,53 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: learning-agent
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/learning_agent
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 123456
+  # Redis 暂未启用（LearningAgentApplication 已排除 RedisAutoConfiguration）
+  # redis:
+  #   host: localhost
+  #   port: 6379
+  #   password:
+  #   database: 0
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# ========== 科大讯飞星火大模型配置 ==========
+# APISecret 请填写在 api-secret 处，或使用环境变量 XFYUN_API_SECRET 覆盖（推荐，避免泄露）
+xfyun:
+  app-id: 3d66baac
+  api-key: 41d971d3b6c70e15c7a174aae86d0d8a
+  api-secret: MDlhNGY3NWJhNDhmNTkwODg2NjMzYTNj
+  spark:
+    # 模型版本须与控制台已开通套餐一致；11200 多为未开通 Max(v3.5)，可先使用 Lite
+    # Lite(免费常用):  v1.1/chat + lite
+    # Pro:             v3.1/chat + generalv3
+    # Max:             v3.5/chat + generalv3.5
+    host-url: wss://spark-api.xf-yun.com/v1.1/chat
+    domain: lite
+    temperature: 0.5
+    max-tokens: 4096
+    connect-timeout-ms: 15000
+    read-timeout-ms: 120000
+    max-retries: 2
+
+logging:
+  level:
+    com.softcup.learning: DEBUG
+    com.softcup.learning.util.xfyun: DEBUG

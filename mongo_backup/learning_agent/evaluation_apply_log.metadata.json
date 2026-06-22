@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"student_id":{"$numberInt":"1"},"applied_at":{"$numberInt":"-1"}},"name":"student_id_1_applied_at_-1"}],"uuid":"020d9b6c45074f2081f9bc7b3958ac2c","collectionName":"evaluation_apply_log","type":"collection"}

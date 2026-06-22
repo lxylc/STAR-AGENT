@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>学习系统演示</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #f7f8fa;
+      --card: #fff;
+      --border: #eeeef2;
+      --text: #333338;
+      --muted: #606266;
+      --primary: #409eff;
+      --danger: #f56c6c;
+      --success: #67c23a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 20px 16px 48px; }
+    .banner {
+      background: #ecf5ff;
+      border: 1px solid #d9ecff;
+      color: #409eff;
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+    .hero {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px 24px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 16px rgba(180, 190, 205, 0.1);
+    }
+    .avatar {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: #f4f5f8; display: flex; align-items: center; justify-content: center;
+      font-size: 20px; font-weight: 600;
+    }
+    .hero h1 { margin: 0 0 4px; font-size: 22px; }
+    .hero p { margin: 0; color: var(--muted); font-size: 14px; }
+    .badge {
+      margin-left: auto;
+      text-align: center;
+      padding: 8px 14px;
+      background: #f4f5f8;
+      border-radius: 10px;
+    }
+    .badge-label { display: block; font-size: 12px; color: var(--muted); }
+    .badge-value { font-size: 18px; font-weight: 700; }
+    .tabs {
+      display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;
+    }
+    .tab {
+      border: 1px solid var(--border);
+      background: var(--card);
+      padding: 8px 16px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .card h2 { margin: 0 0 12px; font-size: 17px; }
+    .sub { font-size: 13px; color: var(--muted); margin: -8px 0 12px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+    .stat {
+      background: #fafafb; border-radius: 10px; padding: 14px;
+    }
+    .stat-label { font-size: 12px; color: var(--muted); }
+    .stat-value { font-size: 26px; font-weight: 700; }
+    .chart { width: 100%; height: 320px; }
+    .chart-sm { height: 220px; }
+    .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 768px) { .charts-row { grid-template-columns: 1fr; } }
+    .desc-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .desc-table th, .desc-table td {
+      border: 1px solid var(--border); padding: 10px 12px; text-align: left;
+    }
+    .desc-table th { background: #fafafb; width: 120px; color: var(--muted); font-weight: 600; }
+    .tag-group { margin-bottom: 14px; }
+    .tag-group h3 { margin: 0 0 8px; font-size: 14px; }
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tag {
+      padding: 4px 10px; border-radius: 999px; font-size: 12px;
+      background: #f4f4f5; border: 1px solid var(--border);
+    }
+    .timeline { list-style: none; padding: 0; margin: 0; }
+    .timeline li {
+      padding: 12px 0 12px 16px;
+      border-left: 2px solid #e4e7ed;
+      margin-left: 8px;
+      position: relative;
+    }
+    .timeline li::before {
+      content: ''; width: 8px; height: 8px; background: var(--primary);
+      border-radius: 50%; position: absolute; left: -5px; top: 18px;
+    }
+    .timeline time { font-size: 12px; color: var(--muted); }
+    .timeline .title { font-weight: 600; display: block; margin: 4px 0; }
+    .wrong-card {
+      border: 1px solid var(--border); border-radius: 10px;
+      padding: 14px; margin-bottom: 12px; background: #fafafa;
+    }
+    .wrong-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+    .pill {
+      font-size: 12px; padding: 2px 8px; border-radius: 4px;
+      background: #ecf5ff; color: #409eff;
+    }
+    .pill.danger { background: #fef0f0; color: var(--danger); }
+    .pill.ok { background: #f0f9eb; color: var(--success); }
+    .wrong-time { margin-left: auto; font-size: 12px; color: #909399; }
+    .answer-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 10px 0;
+      font-size: 14px;
+    }
+    .wrong-label { color: var(--danger); font-weight: 600; font-size: 12px; }
+    .correct-label { color: var(--success); font-weight: 600; font-size: 12px; }
+    .analysis { font-size: 13px; color: var(--muted); margin: 6px 0 0; }
+    .history-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .history-table th, .history-table td {
+      border-bottom: 1px solid var(--border); padding: 10px 8px; text-align: left;
+    }
+    .history-table th { color: var(--muted); font-weight: 600; }
+    .empty { text-align: center; color: var(--muted); padding: 32px 0; }
+    .dialogue-card { padding: 0; overflow: hidden; }
+    .chat-shell {
+      display: flex; flex-direction: column;
+      min-height: 520px; max-height: 72vh;
+      background: #fff;
+    }
+    .chat-toolbar {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 18px; background: #fff;
+      border-bottom: 1px solid var(--border);
+    }
+    .chat-toolbar-icon {
+      width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
+      background: linear-gradient(135deg, #409eff 0%, #66b1ff 100%);
+      color: #fff; font-size: 13px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 8px rgba(64, 158, 255, 0.25);
+    }
+    .chat-toolbar-text { flex: 1; min-width: 0; }
+    .chat-toolbar-title {
+      margin: 0; font-size: 16px; font-weight: 600; color: var(--text); line-height: 1.3;
+    }
+    .chat-toolbar-desc {
+      margin: 2px 0 0; font-size: 12px; color: var(--muted); line-height: 1.4;
+    }
+    .chat-readonly-badge {
+      flex-shrink: 0; font-size: 11px; padding: 4px 10px; border-radius: 999px;
+      background: #f4f4f5; color: #909399; border: 1px solid #ebeef5;
+    }
+    .session-bar { display: flex; gap: 8px; flex-wrap: wrap; padding: 10px 18px 0; }
+    .session-btn {
+      border: 1px solid var(--border); background: #fff; padding: 6px 12px;
+      border-radius: 8px; cursor: pointer; font-size: 12px;
+    }
+    .session-btn.active { border-color: var(--primary); color: var(--primary); background: #ecf5ff; }
+    .chat-box {
+      flex: 1; overflow-y: auto; padding: 18px 18px 10px;
+      background: #f5f7fa;
+    }
+    .msg-row { display: flex; gap: 12px; margin-bottom: 18px; align-items: flex-start; }
+    .msg-row.user { flex-direction: row-reverse; }
+    .msg-avatar {
+      width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; background: #409eff; color: #fff;
+    }
+    .msg-row.user .msg-avatar { background: #67c23a; }
+    .bubble {
+      max-width: min(760px, 82%); padding: 12px 16px; border-radius: 12px;
+      background: #fff; font-size: 15px; line-height: 1.65;
+      white-space: pre-wrap; word-break: break-word;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .msg-row.user .bubble { background: #e3f0ff; }
+    .choice-bubble {
+      min-width: 260px; border: 1px solid #e4e7ed;
+      background: linear-gradient(180deg, #fff 0%, #fafbfc 100%);
+    }
+    .choice-tag {
+      display: inline-block; margin-bottom: 8px; padding: 2px 10px;
+      font-size: 12px; color: #409eff; background: #ecf5ff; border-radius: 4px;
+    }
+    .choice-prompt { margin-bottom: 12px; font-weight: 500; color: #303133; }
+    .choice-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .choice-opt {
+      padding: 8px 16px; border-radius: 999px; font-size: 13px;
+      border: 1px solid #dcdfe6; background: #fff; color: #606266;
+    }
+    .choice-opt.selected { border-color: #409eff; background: #409eff; color: #fff; }
+    .choice-done { margin-top: 10px; font-size: 12px; color: #909399; }
+    .system-note {
+      max-width: 100%; margin: 0 auto 14px; padding: 8px 12px;
+      font-size: 12px; color: #757582; border: 1px dashed #dcdfe6;
+      border-radius: 8px; background: #fff; text-align: center;
+    }
+    .tutor-block { margin-top: 14px; padding-top: 12px; border-top: 1px solid #eeeef2; }
+    .tutor-block h4 { margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #303133; }
+    .md-text { margin: 0 0 8px; }
+    .md-text:last-child { margin-bottom: 0; }
+    .code-block {
+      margin: 10px 0; padding: 12px 14px; background: #1e1e1e; color: #d4d4d4;
+      border-radius: 8px; font-size: 13px; line-height: 1.5; overflow-x: auto;
+    }
+    .code-block code { font-family: Consolas, "Courier New", monospace; white-space: pre; }
+    .inline-code {
+      padding: 2px 6px; background: #f0f2f5; border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace; font-size: 0.92em; color: #c7254e;
+    }
+    .mermaid-wrap {
+      padding: 12px; background: #fff; border: 1px solid #eeeef2;
+      border-radius: 8px; overflow-x: auto;
+    }
+    .mermaid-wrap .mermaid { margin: 0; }
+    .diagram-img { max-width: 100%; border-radius: 8px; border: 1px solid #eeeef2; }
+    .video-section {
+      margin-bottom: 10px; padding: 10px 12px; background: #fafafb;
+      border-radius: 8px; font-size: 13px;
+    }
+    .video-section strong { display: block; margin-bottom: 4px; color: #303133; }
+    .video-hint { color: #909399; font-size: 12px; margin-top: 4px; }
+    .result-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
+    .result-table th, .result-table td { border: 1px solid var(--border); padding: 6px 8px; text-align: left; }
+    .result-table th { background: #fafafb; }
+    .chat-readonly-bar {
+      flex-shrink: 0; padding: 12px 18px 16px; background: #fff;
+      border-top: 1px solid var(--border);
+    }
+    .readonly-input {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 14px; border-radius: 14px;
+      border: 1px solid var(--border); background: #fafafb; color: #909399; font-size: 14px;
+    }
+    .readonly-input svg { flex-shrink: 0; opacity: 0.45; }
+    .meta-foot { font-size: 12px; color: #909399; margin-top: 20px; text-align: center; }
+    .rating-excellent { color: #67c23a; }
+    .rating-good { color: #409eff; }
+    .rating-fair { color: #e6a23c; }
+    .rating-weak { color: #f56c6c; }
+    .ai-text { white-space: pre-wrap; font-size: 14px; }
+    .ai-list { margin: 0; padding-left: 20px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="banner">静态演示 · 只读模式 · 数据导出后固定展示，不可修改</div>
+
+    <div class="hero" id="hero">
+      <div class="avatar" id="avatar">学</div>
+      <div>
+        <h1 id="studentName">加载中…</h1>
+        <p>Python 课程学习画像 · 错题 · 对话记录</p>
+      </div>
+      <div class="badge" id="ratingBadge" style="display:none">
+        <span class="badge-label">综合评级</span>
+        <span class="badge-value" id="ratingLabel">-</span>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="profile">学习画像</button>
+      <button class="tab" data-tab="wrong">错题复习</button>
+      <button class="tab" data-tab="dialogue">智能辅导</button>
+    </div>
+
+    <div id="panel-profile" class="panel active"></div>
+    <div id="panel-wrong" class="panel"></div>
+    <div id="panel-dialogue" class="panel"></div>
+
+    <p class="meta-foot" id="metaFoot"></p>
+  </div>
+
+  <script>
+    let DATA = null
+    const charts = []
+    let mermaidSeq = 0
+
+    function esc(s) {
+      return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    }
+
+    function fmtTime(v) {
+      if (!v) return '-'
+      const d = new Date(v)
+      return Number.isNaN(d.getTime()) ? v : d.toLocaleString('zh-CN', { hour12: false })
+    }
+
+    function computeRating(avg) {
+      if (avg == null || Number.isNaN(avg)) return { label: '-', cls: '' }
+      if (avg >= 85) return { label: '优秀', cls: 'rating-excellent' }
+      if (avg >= 70) return { label: '良好', cls: 'rating-good' }
+      if (avg >= 45) return { label: '一般', cls: 'rating-fair' }
+      return { label: '待加强', cls: 'rating-weak' }
+    }
+
+    function topModules(modules, order, n = 3) {
+      return [...(modules || [])]
+        .filter(m => m.final_score != null)
+        .sort((a, b) => order === 'asc' ? a.final_score - b.final_score : b.final_score - a.final_score)
+        .slice(0, n)
+    }
+
+    function barChart(el, modules, color) {
+      if (!modules.length) { el.innerHTML = '<div class="empty">暂无数据</div>'; return }
+      const chart = echarts.init(el)
+      charts.push(chart)
+      chart.setOption({
+        grid: { left: 120, right: 24, top: 16, bottom: 24 },
+        xAxis: { type: 'value', max: 100 },
+        yAxis: {
+          type: 'category',
+          data: modules.map(m => m.module_name).reverse(),
+          axisLabel: { width: 100, overflow: 'truncate' }
+        },
+        series: [{
+          type: 'bar',
+          data: modules.map(m => m.final_score).reverse(),
+          itemStyle: { color, borderRadius: [0, 4, 4, 0] },
+          label: { show: true, position: 'right', formatter: '{c}分' }
+        }]
+      })
+    }
+
+    function radarChart(el, modules) {
+      const list = (modules || []).filter(m => m.final_score != null)
+      if (!list.length) { el.innerHTML = '<div class="empty">暂无数据</div>'; return }
+      const chart = echarts.init(el)
+      charts.push(chart)
+      chart.setOption({
+        radar: {
+          indicator: list.map(m => ({ name: m.module_name, max: 100 })),
+          radius: '62%'
+        },
+        series: [{
+          type: 'radar',
+          data: [{ value: list.map(m => m.final_score), name: '掌握度', areaStyle: { opacity: 0.15 } }],
+          itemStyle: { color: '#409eff' }
+        }]
+      })
+    }
+
+    function trendChart(el, snapshots) {
+      const sorted = [...(snapshots || [])].sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+      const points = sorted.map(snap => {
+        const scores = snap.scores && typeof snap.scores === 'object' ? Object.values(snap.scores) : []
+        const nums = scores.map(s => Number(s.final_score)).filter(n => !Number.isNaN(n))
+        if (!nums.length) return null
+        const avg = Math.round(nums.reduce((a, b) => a + b, 0) / nums.length)
+        const d = new Date(snap.created_at)
+        const label = Number.isNaN(d.getTime()) ? String(snap.created_at).slice(0, 10) : `${d.getMonth()+1}/${d.getDate()}`
+        return { label, avg }
+      }).filter(Boolean)
+      if (points.length < 2) { el.innerHTML = '<div class="empty">快照不足，暂无趋势图</div>'; return }
+      const chart = echarts.init(el)
+      charts.push(chart)
+      chart.setOption({
+        grid: { left: 48, right: 24, top: 24, bottom: 32 },
+        xAxis: { type: 'category', data: points.map(p => p.label) },
+        yAxis: { type: 'value', min: 0, max: 100 },
+        series: [{ type: 'line', smooth: true, data: points.map(p => p.avg), itemStyle: { color: '#409eff' } }]
+      })
+    }
+
+    function parsePrefs(raw) {
+      if (!raw) return '-'
+      try {
+        const arr = JSON.parse(raw)
+        return Array.isArray(arr) ? arr.join('、') : raw
+      } catch { return raw }
+    }
+
+    function renderProfile() {
+      const m = DATA.mastery || {}
+      const basic = DATA.basic || {}
+      const avg = m.summary?.avg_score
+      const rating = computeRating(avg)
+      const panel = document.getElementById('panel-profile')
+
+      if (!m.has_profile) {
+        panel.innerHTML = '<div class="card"><div class="empty">该用户尚未完成画像构建</div></div>'
+        return
+      }
+
+      panel.innerHTML = `
+        <div class="card">
+          <h2>基础信息</h2>
+          <table class="desc-table">
+            <tr><th>姓名</th><td>${esc(basic.real_name || '-')}</td><th>年级</th><td>${esc(basic.grade || '-')}</td></tr>
+            <tr><th>专业</th><td>${esc(basic.major || '-')}</td><th>学习偏好</th><td>${esc(parsePrefs(basic.learn_preferences))}</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <h2>综合概览</h2>
+          <div class="grid-2" style="margin-bottom:16px">
+            <div class="stat"><div class="stat-label">整体平均分</div><div class="stat-value">${avg ?? '-'}</div></div>
+            <div class="stat"><div class="stat-label">综合评级</div><div class="stat-value ${rating.cls}">${rating.label}</div></div>
+          </div>
+          <div class="charts-row">
+            <div><p class="sub">TOP3 薄弱模块</p><div id="chartWeak" class="chart chart-sm"></div></div>
+            <div><p class="sub">TOP3 优势模块</p><div id="chartStrong" class="chart chart-sm"></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <h2>模块掌握雷达图</h2>
+          <div id="chartRadar" class="chart"></div>
+        </div>
+        <div class="card">
+          <h2>学习趋势</h2>
+          <div id="chartTrend" class="chart chart-sm"></div>
+        </div>
+        <div class="card">
+          <h2>AI 智能解读</h2>
+          <p class="ai-text">${esc(m.ai_interpretation || '暂无解读')}</p>
+        </div>
+        <div class="card" id="tagCard"></div>
+      `
+
+      requestAnimationFrame(() => {
+        barChart(document.getElementById('chartWeak'), topModules(m.modules, 'asc'), '#f56c6c')
+        barChart(document.getElementById('chartStrong'), topModules(m.modules, 'desc'), '#67c23a')
+        radarChart(document.getElementById('chartRadar'), m.modules)
+        trendChart(document.getElementById('chartTrend'), m.snapshots)
+      })
+
+      renderTags(m.modules)
+    }
+
+    function renderTags(modules) {
+      const el = document.getElementById('tagCard')
+      if (!el) return
+      const groups = [
+        { title: '知识短板标签', key: 'weakness_type', skip: '无短板' },
+        { title: '代码实操标签', key: 'code_practice_feel' },
+        { title: '练习频次标签', key: 'practice_frequency' }
+      ]
+      let html = '<h2>学情标签</h2>'
+      for (const g of groups) {
+        const tags = new Set()
+        for (const mod of modules || []) {
+          const v = mod.tags?.[g.key]
+          if (v && v !== g.skip) tags.add(`${mod.module_name}：${v}`)
+        }
+        html += `<div class="tag-group"><h3>${g.title}</h3><div class="tags">`
+        html += tags.size ? [...tags].map(t => `<span class="tag">${esc(t)}</span>`).join('') : '<span class="empty" style="padding:0">暂无</span>'
+        html += '</div></div>'
+      }
+      if (DATA.weak_points?.length) {
+        html += `<div class="tag-group"><h3>画像薄弱点</h3><div class="tags">${DATA.weak_points.map(w => `<span class="tag">${esc(w)}</span>`).join('')}</div></div>`
+      }
+      el.innerHTML = html
+    }
+
+    function renderWrong() {
+      const wrong = DATA.wrong || {}
+      const items = wrong.items || []
+      const panel = document.getElementById('panel-wrong')
+      let stats = ''
+      if (wrong.module_stats?.length) {
+        stats = `<div class="tags" style="margin-bottom:12px">${wrong.module_stats.map(s =>
+          `<span class="tag pill danger">${esc(s.module_name)} · ${s.wrong_count} 题</span>`
+        ).join('')}</div>`
+      }
+      if (!items.length) {
+        panel.innerHTML = `<div class="card"><h2>错题复习</h2>${stats}<div class="empty">暂无错题</div></div>`
+        return
+      }
+      panel.innerHTML = `<div class="card"><h2>错题复习</h2><p class="sub">共 ${items.length} 道错题（只读）</p>${stats}${items.map(item => `
+        <div class="wrong-card">
+          <div class="wrong-head">
+            <span class="pill">${esc(item.source_label || '错题')}</span>
+            ${item.module_name ? `<span class="pill">${esc(item.module_name)}</span>` : ''}
+            ${item.reviewed ? '<span class="pill ok">已复习</span>' : ''}
+            <span class="wrong-time">${esc(fmtTime(item.created_at))}</span>
+          </div>
+          <p>${esc(item.content)}</p>
+          <div class="answer-grid">
+            <div><div class="wrong-label">你的答案</div><div>${esc(item.user_answer || '—')}</div></div>
+            <div><div class="correct-label">正确答案</div><div>${esc(item.correct_answer || '—')}</div></div>
+          </div>
+          ${item.analysis ? `<p class="analysis">解析：${esc(item.analysis)}</p>` : ''}
+          ${item.judge_reason ? `<p class="analysis">判题说明：${esc(item.judge_reason)}</p>` : ''}
+        </div>`).join('')}</div>`
+    }
+
+    function renderMarkdown(raw) {
+      if (!raw) return ''
+      const parts = []
+      const re = /```(\w*)\n?([\s\S]*?)```/g
+      let last = 0
+      let m
+      while ((m = re.exec(raw)) !== null) {
+        if (m.index > last) parts.push({ type: 'text', content: raw.slice(last, m.index) })
+        parts.push({ type: 'code', content: m[2].trim() })
+        last = m.index + m[0].length
+      }
+      if (last < raw.length) parts.push({ type: 'text', content: raw.slice(last) })
+
+      return parts.map((p) => {
+        if (p.type === 'code') {
+          return `<pre class="code-block"><code>${esc(p.content)}</code></pre>`
+        }
+        let t = esc(p.content)
+        t = t.replace(/`([^`\n]+)`/g, '<code class="inline-code">$1</code>')
+        t = t.replace(/\n\n+/g, '</p><p class="md-text">').replace(/\n/g, '<br>')
+        return `<p class="md-text">${t}</p>`
+      }).join('')
+    }
+
+    function renderTutoringPayload(p) {
+      const text = p.text_answer || p.content || ''
+      let html = renderMarkdown(text)
+
+      const diagramImg = p.diagram_image_url || p.diagram?.image_url
+      if (diagramImg) {
+        html += `<div class="tutor-block"><h4>${esc(p.diagram?.title || '图解说明')}</h4><img class="diagram-img" src="${esc(diagramImg)}" alt="图解" /></div>`
+      } else if (p.diagram?.mermaid) {
+        const id = `mmd-${++mermaidSeq}`
+        html += `<div class="tutor-block"><h4>${esc(p.diagram.title || '图解说明')}</h4><div class="mermaid-wrap"><pre class="mermaid" id="${id}">${esc(p.diagram.mermaid)}</pre></div></div>`
+      }
+
+      const sections = p.video_script?.sections
+      if (Array.isArray(sections) && sections.length) {
+        html += `<div class="tutor-block"><h4>${esc(p.video_script.title || '短视频讲解')}${p.video_script.duration_sec ? ` · ${p.video_script.duration_sec} 秒` : ''}</h4>`
+        html += sections.map((sec) => `<div class="video-section"><strong>${esc(sec.title || '片段')}</strong><div>${esc(sec.narration || '')}</div>${sec.visual_hint ? `<div class="video-hint">画面：${esc(sec.visual_hint)}</div>` : ''}</div>`).join('')
+        html += '</div>'
+      }
+
+      if (p.video_slides?.length) {
+        html += `<div class="tutor-block"><h4>讲解幻灯片</h4>`
+        html += p.video_slides.map((slide, i) => `<div class="video-section"><strong>第 ${i + 1} 页</strong>${slide.image_url ? `<img class="diagram-img" src="${esc(slide.image_url)}" alt="" />` : ''}<div>${esc(slide.narration || slide.text || '')}</div></div>`).join('')
+        html += '</div>'
+      }
+
+      if (p.related_kps?.length) {
+        html += `<div class="tutor-block"><h4>相关知识点</h4><div class="tags">${p.related_kps.map((k) => `<span class="tag">${esc(k)}</span>`).join('')}</div></div>`
+      }
+
+      return html
+    }
+
+    async function renderMermaidIn(container) {
+      if (!container || !window.mermaid) return
+      const nodes = container.querySelectorAll('.mermaid')
+      if (!nodes.length) return
+      try {
+        mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' })
+        await mermaid.run({ nodes: [...nodes] })
+      } catch (e) {
+        console.warn('Mermaid 渲染失败', e)
+      }
+    }
+
+    function renderChatMessage(msg) {
+      if (msg.msg_type === 'mastery_update') {
+        return `<p class="system-note">${esc(msg.content)}</p>`
+      }
+
+      if (msg.msg_type === 'tutoring_answer' || msg.msg_type === 'tutoring_welcome') {
+        const p = msg.payload || {}
+        const body = msg.msg_type === 'tutoring_welcome'
+          ? renderMarkdown(msg.content)
+          : renderTutoringPayload({ ...p, text_answer: p.text_answer || msg.content })
+        return `<div class="msg-row assistant">
+          <div class="msg-avatar">AI</div>
+          <div class="bubble">${body}</div>
+        </div>`
+      }
+
+      const role = msg.role === 'user' ? 'user' : 'assistant'
+      if (role !== 'user' && role !== 'assistant') return ''
+      const content = (msg.content || '').trim()
+      if (!content) return ''
+      return `<div class="msg-row ${role}">
+        <div class="msg-avatar">${role === 'user' ? '我' : 'AI'}</div>
+        <div class="bubble">${role === 'user' ? esc(content) : renderMarkdown(content)}</div>
+      </div>`
+    }
+
+    function getTutoringSessions() {
+      const all = DATA.dialogue_sessions || []
+      const tutoring = all.filter((s) => String(s.session_id || '').startsWith('tutor-'))
+      if (tutoring.length) return tutoring
+      return all
+    }
+
+    function renderDialogue() {
+      const sessions = getTutoringSessions()
+      const panel = document.getElementById('panel-dialogue')
+
+      if (!sessions.length) {
+        panel.innerHTML = `<div class="card"><h2>智能辅导对话</h2><div class="empty">暂无智能辅导记录</div></div>`
+        return
+      }
+
+      panel.innerHTML = `<div class="card dialogue-card">
+        <div class="chat-shell">
+          <header class="chat-toolbar">
+            <div class="chat-toolbar-icon">AI</div>
+            <div class="chat-toolbar-text">
+              <h2 class="chat-toolbar-title">智能辅导</h2>
+              <p class="chat-toolbar-desc">Python 学习助手 · 历史对话记录</p>
+            </div>
+            <span class="chat-readonly-badge">只读演示</span>
+          </header>
+          <div id="sessionBar" class="session-bar"></div>
+          <div id="chatBox" class="chat-box"></div>
+          <div class="chat-readonly-bar">
+            <div class="readonly-input">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a4 4 0 0 1-4 4H7l-4 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/></svg>
+              演示模式 · 仅可查看，无法发送新消息
+            </div>
+          </div>
+        </div>
+      </div>`
+
+      let activeIdx = 0
+      const draw = async () => {
+        mermaidSeq = 0
+        const sess = sessions[activeIdx]
+        const msgs = sess.messages || []
+        const bar = document.getElementById('sessionBar')
+        bar.innerHTML = sessions.length > 1
+          ? sessions.map((s, i) =>
+              `<button class="session-btn ${i === activeIdx ? 'active' : ''}" data-idx="${i}">${esc(s.label || fmtTime(s.started_at))} · ${s.message_count || msgs.length} 条</button>`
+            ).join('')
+          : ''
+
+        const box = document.getElementById('chatBox')
+        box.innerHTML = msgs.map(renderChatMessage).filter(Boolean).join('') || '<div class="empty">暂无消息</div>'
+        await renderMermaidIn(box)
+        box.scrollTop = box.scrollHeight
+
+        bar.querySelectorAll('.session-btn').forEach(btn => {
+          btn.addEventListener('click', () => { activeIdx = Number(btn.dataset.idx); draw() })
+        })
+      }
+      draw()
+    }
+
+    function switchTab(name) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name))
+      document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === `panel-${name}`))
+      if (name === 'profile') requestAnimationFrame(() => renderProfile())
+      if (name === 'dialogue') requestAnimationFrame(() => renderDialogue())
+      window.dispatchEvent(new Event('resize'))
+    }
+
+    async function init() {
+      const res = await fetch('./data.json')
+      DATA = await res.json()
+
+      const name = DATA.basic?.real_name || DATA.title || '学习者'
+      document.getElementById('studentName').textContent = name
+      document.getElementById('avatar').textContent = name.slice(0, 1) || '学'
+      document.title = `${name} · 学习演示`
+
+      const avg = DATA.mastery?.summary?.avg_score
+      const rating = computeRating(avg)
+      if (DATA.mastery?.has_profile) {
+        const badge = document.getElementById('ratingBadge')
+        badge.style.display = ''
+        document.getElementById('ratingLabel').textContent = rating.label
+        document.getElementById('ratingLabel').className = `badge-value ${rating.cls}`
+      }
+
+      document.getElementById('metaFoot').textContent =
+        `数据导出时间：${fmtTime(DATA.exported_at)} · 学生 ID：${DATA.student_id}`
+
+      renderProfile()
+      renderWrong()
+      renderDialogue()
+
+      document.querySelectorAll('.tab').forEach(btn => {
+        btn.addEventListener('click', () => switchTab(btn.dataset.tab))
+      })
+    }
+
+    window.addEventListener('resize', () => charts.forEach(c => c.resize()))
+    init().catch(err => {
+      document.body.innerHTML = `<div class="wrap"><div class="card"><h2>加载失败</h2><p>${esc(err.message)}</p><p class="sub">请先运行 export.mjs 生成 data.json，或通过本地服务器 / Gitee Pages 访问。</p></div></div>`
+    })
+  </script>
+</body>
+</html>
